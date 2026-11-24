@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 
 <html lang="th">
@@ -14,23 +15,111 @@
 
 <style>
 
-body{font-family:Arial,sans-serif;margin:0;background:#f5faf7;color:#234}
+body {
 
-header{background:#16866b;color:white;padding:25px;text-align:center}
+  font-family: Arial, sans-serif;
 
-h1{margin:0}
+  margin: 0;
 
-.container{max-width:900px;margin:30px auto;padding:15px}
+  background: #f5f7f7;
 
-.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+  color: #234;
 
-.card{background:white;padding:22px;border-radius:15px;text-align:center;box-shadow:0 3px 12px #ddd}
+}
 
-.photo{font-size:65px}
+header {
 
-button{background:#16866b;color:white;border:0;padding:12px 20px;border-radius:8px;cursor:pointer}
+  background: #16866b;
 
-.cart{background:white;padding:20px;margin-top:25px;border-radius:12px}
+  color: white;
+
+  padding: 25px;
+
+  text-align: center;
+
+}
+
+h1 { margin: 0; }
+
+.container {
+
+  max-width: 900px;
+
+  margin: 30px auto;
+
+  padding: 15px;
+
+}
+
+.products {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+
+  gap: 20px;
+
+}
+
+.card {
+
+  background: white;
+
+  padding: 22px;
+
+  border-radius: 15px;
+
+  text-align: center;
+
+  box-shadow: 0 3px 12px #ddd;
+
+}
+
+.photo {
+
+  font-size: 65px;
+
+}
+
+button {
+
+  background: #16866b;
+
+  color: white;
+
+  border: 0;
+
+  padding: 12px 20px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+}
+
+.cart {
+
+  background: white;
+
+  padding: 20px;
+
+  margin-top: 25px;
+
+  border-radius: 12px;
+
+}
+
+input {
+
+  display: block;
+
+  width: 95%;
+
+  padding: 10px;
+
+  margin: 10px 0;
+
+}
 
 </style>
 
@@ -48,7 +137,7 @@ button{background:#16866b;color:white;border:0;padding:12px 20px;border-radius:8
 
 <div class="container">
 
-<h2>สินค้าแนะนำ</h2>
+<h2>สินค้าที่แนะนำ</h2>
 
 <div class="products">
 
@@ -62,7 +151,7 @@ button{background:#16866b;color:white;border:0;padding:12px 20px;border-radius:8
 
 <p>ราคา 89 บาท</p>
 
-<button onclick="add('ยาสีฟันสมุนไพร',89)">เพิ่มลงตะกร้า</button>
+<button onclick="add(0)">เพิ่มลงตะกร้า</button>
 
 </div>
 
@@ -70,13 +159,13 @@ button{background:#16866b;color:white;border:0;padding:12px 20px;border-radius:8
 
 <div class="photo">✨</div>
 
-<h3>ยาสีฟันไวท์เทนนิ่ง</h3>
+<h3>ยาสีฟันเฟรชมิ้นต์</h3>
 
-<p>สูตรฟันขาว</p>
+<p>สูตรเย็นสดชื่น ลมหายใจหอม</p>
 
-<p>ราคา 129 บาท</p>
+<p>ราคา 99 บาท</p>
 
-<button onclick="add('ยาสีฟันไวท์เทนนิ่ง',129)">เพิ่มลงตะกร้า</button>
+<button onclick="add(1)">เพิ่มลงตะกร้า</button>
 
 </div>
 
@@ -88,19 +177,17 @@ button{background:#16866b;color:white;border:0;padding:12px 20px;border-radius:8
 
 <div id="items">ยังไม่มีสินค้า</div>
 
-<p id="total">รวม 0 บาท</p>
+<h3>รวม <span id="total">0</span> บาท</h3>
 
 <h3>ข้อมูลจัดส่ง</h3>
 
-<input id="name" placeholder="ชื่อผู้รับ"><br><br>
+<input id="name" placeholder="ชื่อผู้รับ">
 
-<input id="address" placeholder="ที่อยู่จัดส่ง"><br><br>
+<input id="address" placeholder="ที่อยู่จัดส่ง">
 
-<input id="phone" placeholder="เบอร์โทรศัพท์"><br><br>
+<input id="phone" placeholder="เบอร์โทรศัพท์">
 
 <button onclick="checkout()">ยืนยันคำสั่งซื้อ</button>
-
-<p id="result"></p>
 
 </div>
 
@@ -108,31 +195,81 @@ button{background:#16866b;color:white;border:0;padding:12px 20px;border-radius:8
 
 <script>
 
-let cart=[];
+const products = [
 
-function add(name,price){
+  {name: "ยาสีฟันสมุนไพร", price: 89},
 
-cart.push({name,price});
+  {name: "ยาสีฟันเฟรชมิ้นต์", price: 99}
 
-show();
+];
+
+let cart = [];
+
+function add(index) {
+
+  cart.push(products[index]);
+
+  updateCart();
 
 }
 
-function show(){
+function updateCart() {
 
-document.getElementById('items').innerHTML=cart.map(x=>x.name+' - '+x.price+' บาท').join('<br>')||'ยังไม่มีสินค้า';
+  let total = 0;
 
-document.getElementById('total').innerText='รวม '+cart.reduce((s,x)=>s+x.price,0)+' บาท';
+  let html = "";
+
+  cart.forEach(item => {
+
+    html += "<p>" + item.name + " - " + item.price + " บาท</p>";
+
+    total += item.price;
+
+  });
+
+  document.getElementById("items").innerHTML =
+
+    html || "ยังไม่มีสินค้า";
+
+  document.getElementById("total").innerText = total;
 
 }
 
-function checkout(){
+function checkout() {
 
-if(!cart.length){alert('กรุณาเลือกสินค้าก่อน');return;}
+  const name = document.getElementById("name").value;
 
-if(!name.value||!address.value||!phone.value){alert('กรุณากรอกข้อมูลจัดส่ง');return;}
+  const address = document.getElementById("address").value;
 
-document.getElementById('result').innerText='รับคำสั่งซื้อแล้ว ขอบคุณค่ะ';
+  const phone = document.getElementById("phone").value;
+
+  if (cart.length === 0) {
+
+    alert("กรุณาเลือกสินค้าก่อน");
+
+    return;
+
+  }
+
+  if (!name || !address || !phone) {
+
+    alert("กรุณากรอกข้อมูลจัดส่งให้ครบ");
+
+    return;
+
+  }
+
+  alert("ขอบคุณสำหรับคำสั่งซื้อ " + name +
+
+        "\nยอดชำระ " +
+
+        document.getElementById("total").innerText +
+
+        " บาท");
+
+  cart = [];
+
+  updateCart();
 
 }
 
